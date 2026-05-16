@@ -346,6 +346,54 @@
   .rename-list::-webkit-scrollbar { width: 4px; }
   .rename-list::-webkit-scrollbar-track { background: transparent; }
   .rename-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+  /* Post-download state */
+  #done {
+    display: none;
+    padding: 1.25rem 1.5rem;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+  }
+  #done.visible { display: flex; }
+
+  .done-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  .done-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .done-check svg { color: var(--accent); }
+
+  .btn-another {
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    width: 100%;
+  }
+  .btn-another:hover { background: var(--surface-2); border-color: var(--border-strong); }
+  .btn-another:active { transform: scale(0.99); }
 </style>
 </head>
 <body>
@@ -403,12 +451,22 @@
     </div>
     <button class="btn-download" id="btn-download">Download cleaned zip</button>
   </div>
+
+  <div id="done">
+    <div class="done-message">
+      <div class="done-check">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span id="done-filename"></span>
+    </div>
+    <button class="btn-another" id="btn-another">Clean another file</button>
+  </div>
 </div>
 
 <footer>
   All processing happens locally in your browser.<br>
   Your files are never sent to a server.<br>
-  <a href="https://github.com/" target="_blank">View source on GitHub</a>
+  <a href="https://github.com/michael-baker-content/notion-clean" target="_blank">View source on GitHub</a>
 </footer>
 
 <script>
@@ -510,6 +568,7 @@ function reset() {
   document.getElementById('preview').classList.remove('visible');
   document.getElementById('actions').classList.remove('visible');
   document.getElementById('warn-dupes').classList.remove('visible');
+  document.getElementById('done').classList.remove('visible');
   document.getElementById('file-input').value = '';
   document.getElementById('filename-input').value = '';
 }
@@ -553,9 +612,15 @@ document.getElementById('btn-download').addEventListener('click', async () => {
   a.click();
   URL.revokeObjectURL(a.href);
 
+  document.getElementById('actions').classList.remove('visible');
+  document.getElementById('done-filename').textContent = `${inputName}.zip downloaded`;
+  document.getElementById('done').classList.add('visible');
+
   btn.textContent = 'Download cleaned zip';
   btn.disabled = false;
 });
+
+document.getElementById('btn-another').addEventListener('click', reset);
 </script>
 </body>
 </html>
